@@ -1,0 +1,59 @@
+name: Publish Package
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    name: Checking code quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  package:
+    name: Creates package
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: npm ci
+      - run: npm pack
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: "*.tgz"
+
+  publish:
+    name: Publishing
+    needs: [ package ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - registry-url: 'https://registry.npmjs.org'
+            token_name: NPM_TOKEN
+          - registry-url: 'https://npm.pkg.github.com'
+            token_name: GITHUB_TOKEN
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: package
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: ${{ matrix.registry-url }}
+      - run: npm publish $(ls *.tgz)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets[matrix.token_name] }}
