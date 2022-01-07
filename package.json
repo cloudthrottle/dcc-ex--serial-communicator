@@ -7,7 +7,6 @@
     "url": "https://dcyoung.dev"
   },
   "type": "module",
-  "module": "./lib/esm/index.js",
   "files": [
     "lib/"
   ],
@@ -19,6 +18,7 @@
     }
   },
   "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
   "types": "./lib/types/index.d.ts",
   "keywords": [
     "dcc",
