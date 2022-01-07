@@ -1,6 +1,6 @@
 {
   "name": "@cloudthrottle/dcc-ex--serial-communicator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library for communicating with DCC++EX command station.",
   "author": {
     "name": "David Young (@dcyoung-dev)",
